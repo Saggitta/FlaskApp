@@ -29,9 +29,16 @@ def create_app(test_config=None):
         return "Hello, World!"
 
     from . import db
+
     db.init_app(app)
-    
+
     from . import auth
+
     app.register_blueprint(auth.bp)
-    
+
+    from . import crud
+
+    app.register_blueprint(crud.bp)
+    app.add_url_rule("/", endpoint="index")
+
     return app
