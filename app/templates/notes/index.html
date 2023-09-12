@@ -8,18 +8,19 @@
 {% endblock %}
 
 {% block content %}
-  {% for post in posts %}
-    <article class="post">
+  {% for note in notes %}
+    <article class="note">
       <header>
         <div>
-          <h1>{{ post['title'] }}</h1>
-          <div class="about">by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}</div>
+          <h1>{{ note['title'] }}</h1>
+          <h1>{{ note['id'] }}</h1>
+          <div class="about">by {{ note['username'] }} on {{ note['created'].strftime('%Y-%m-%d') }}</div>
         </div>
-        {% if session.user['id'] == post['author_id'] %}
-          <a class="action" href="{{ url_for('notes.update', id=post['id']) }}">Edit</a>
+        {% if session and note['author_id'] == session.get("user").get("userinfo").get("sub")%}
+          <a class="action" href="{{ url_for('notes.update', id=note['id']) }}">Edit</a>
         {% endif %}
       </header>
-      <p class="body">{{ post['body'] }}</p>
+      <p class="body">{{ note['body'] }}</p>
     </article>
     {% if not loop.last %}
       <hr>

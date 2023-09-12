@@ -18,8 +18,8 @@ def index():
     """Show all the notes, most recent first."""
     db = get_db()
     notes = db.execute(
-        "SELECT p.id, title, body, created, author_id, username"
-        " FROM notes p JOIN user u ON p.author_id = u.id"
+        "SELECT id, title, body, created, author_id"
+        " FROM notes"
         " ORDER BY created DESC"
     ).fetchall()
     return render_template("notes/index.html", notes=notes)
@@ -40,9 +40,9 @@ def get_post(id, check_author=True):
     notes = (
         get_db()
         .execute(
-            "SELECT p.id, title, body, created, author_id, username"
-            " FROM notes p JOIN user u ON p.author_id = u.id"
-            " WHERE p.id = ?",
+            "SELECT id, title, body, created, author_id"
+            " FROM notes"
+            " WHERE id = ?",
             (id,),
         )
         .fetchone()
@@ -51,7 +51,7 @@ def get_post(id, check_author=True):
     if notes is None:
         abort(404, f"Post id {id} doesn't exist.")
 
-    if check_author and notes["author_id"] != g.user["id"]:
+    if check_author and notes["author_id"] != session.get("user").get("userinfo").get("sub"):
         abort(403)
 
     return notes
@@ -66,7 +66,7 @@ def create():
         body = request.form["body"]
         error = None
 
-        author_id = "1234"
+        author_id = session.get("user").get("userinfo").get("sub")
 
         if not title:
             error = "Title is required."

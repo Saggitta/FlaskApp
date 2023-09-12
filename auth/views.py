@@ -24,6 +24,10 @@ oauth.register(
 )
 
 
+@auth_bp.route("/test")
+def test():
+    return session.get("user").get("userinfo").get("sub")
+
 @auth_bp.route("/login")
 def login():
     """
@@ -55,7 +59,7 @@ def logout():
         + "/v2/logout?"
         + urlencode(
             {
-                "returnTo": url_for("notes.home", _external=True),
+                "returnTo": url_for("notes.index", _external=True),
                 "client_id": client_id,
             },
             quote_via=quote_plus,
